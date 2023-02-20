@@ -419,12 +419,12 @@ Resources:
             - install_webserver
             - build_cacheclient
             - build_wordpress
-            - build_opcache
+#            - build_opcache
             - download_aws_ini
             - install_aws_ini
-            - install_cacheclient
+#            - install_cacheclient
             - install_wordpress
-            - install_opcache
+#            - install_opcache
             - start_webserver
         install_webserver:
           packages:
@@ -536,7 +536,7 @@ Resources:
                     "       wp core download --version='", !Ref WPVersion, "' --locale='", !Ref WPLocale, "' --allow-root\n",  
                     "       wp core config --dbname='", !Ref DatabaseName, "' --dbuser='", !Ref DatabaseMasterUsername, "' --dbpass='", !Ref DatabaseMasterPassword, "' --dbhost='", !Ref DatabaseClusterEndpointAddress, "' --dbprefix=wp_ --allow-root\n",
                     "       wp core install --url=", !If [ NoWPDomainName, !Ref PublicAlbHostname, !Join [ "", [ "'http://www.", !Ref WPDomainName, "'" ] ] ], " --title='", !Ref WPTitle, "' --admin_user='", !Ref WPAdminUsername, "' --admin_password='", !Ref WPAdminPassword, "' --admin_email='", !Ref WPAdminEmail, "' --skip-email --allow-root\n",
-                    "       wp plugin install w3-total-cache\n",
+                    "       wp plugin install w3-total-cache\n --allow-root",
                     "       sed -i \"/$table_prefix = 'wp_';/ a \\define('WP_HOME', 'http://' . \\$_SERVER['HTTP_HOST']); \" /var/www/wordpress/", !Ref WPDirectory, "/wp-config.php\n",
                     "       sed -i \"/$table_prefix = 'wp_';/ a \\define('WP_SITEURL', 'http://' . \\$_SERVER['HTTP_HOST']); \" /var/www/wordpress/", !Ref WPDirectory, "/wp-config.php\n",
                     "       # enable HTTPS in wp-config.php if ACM Public SSL Certificate parameter was not empty\n",
