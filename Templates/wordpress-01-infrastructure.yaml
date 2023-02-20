@@ -507,6 +507,7 @@ Resources:
         DataSubnet5Cidr:
           !Ref DataSubnet5Cidr
       TemplateURL: https://s3.amazonaws.com/aws-refarch/wordpress/latest/templates/aws-refarch-wordpress-01-newvpc.yaml
+      
   publicalb:
     Condition: AvailableAWSRegion
     DependsOn: [ newvpc, securitygroups ]

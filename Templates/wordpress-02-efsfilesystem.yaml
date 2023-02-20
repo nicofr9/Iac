@@ -18,7 +18,7 @@ Metadata:
         default: Amazon EFS Parameters
       Parameters:
         - Growth
-        - InstanceType
+        - InstanceTypeEFS
         - EC2KeyName
         - PerformanceMode
         - EncrpytedBoolean
@@ -33,7 +33,7 @@ Metadata:
         default: KMS Key
       Growth:
         default: Add data (GiB)
-      InstanceType:
+      InstanceTypeEFS:
         default: Instance Type
       EC2KeyName:
         default: Existing Key Pair
@@ -65,7 +65,7 @@ Parameters:
     MaxValue: 6144
     MinValue: 0
     Type: Number
-  InstanceType:
+  InstanceTypeEFS:
     AllowedValues:
       - t3.nano
       - t3.micro
@@ -490,7 +490,7 @@ Resources:
       IamInstanceProfile: !Ref InstanceProfile
       ImageId: !FindInMap [ RegionMap, !Ref 'AWS::Region', AMI ]
       InstanceMonitoring: true
-      InstanceType: !Ref InstanceType
+      InstanceType: !Ref InstanceTypeEFS
       KeyName: !Ref EC2KeyName
       SecurityGroups:
       - !Ref SecurityGroup
