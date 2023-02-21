@@ -41,7 +41,10 @@ Parameters:
     AllowedPattern: ^(?!http)(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$
     Description: The main domain name of the WordPress site (e.g. example.com).
     Type: String
-
+  Hostname:
+    AllowedPattern: ^(?!http)(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$
+    Description: The main domain name of the WordPress site (e.g. example.com).
+    Type: String
 Resources:
 
   RecordSet:
@@ -49,7 +52,7 @@ Resources:
     Properties:
       HostedZoneName: !Join ['', [!Ref WPDomainName, '.']]
       RecordSets:
-      - Name: !Join ['', ['www.', !Ref WPDomainName, '.']]
+      - Name: !Join ['', [!Ref Hostname, !Ref WPDomainName, '.']]
         Type: A
         AliasTarget:
           DNSName: !Ref DnsEndpoint
