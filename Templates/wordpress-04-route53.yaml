@@ -50,7 +50,7 @@ Resources:
   RecordSet:
     Type: AWS::Route53::RecordSetGroup
     Properties:
-      HostedZoneName: !Join ['', [!Ref WPDomainName, '.']]
+      HostedZoneName: !Ref WPDomainName
       RecordSets:
       - Name: !Join ['', [!Ref Hostname, !Ref WPDomainName, '.']]
         Type: A
