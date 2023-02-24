@@ -55,4 +55,3 @@ Resources:
       - !Ref DnsEndpoint
       TTL: 3600
       Type: A
-

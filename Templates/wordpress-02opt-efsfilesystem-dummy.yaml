@@ -1,0 +1,229 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Reference Architecture to host WordPress on AWS - Creates EFS file system
+
+Metadata:
+
+  Authors:
+    Description: Darryl Osborne (darrylo@amazon.com)
+  License:
+    Description: 'Copyright 2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+                  SPDX-License-Identifier: MIT-0'
+
+  AWS::CloudFormation::Interface:
+
+    ParameterGroups:
+    - Label:
+        default: Amazon EFS Parameters
+      Parameters:
+        - Growth
+        - InstanceType
+        - Cmk
+        - SecurityGroup
+        - NumberOfSubnets
+        - Subnet
+    ParameterLabels:
+      EncrpytedBoolean:
+        default: Encryption state
+      Cmk:
+        default: KMS Key
+      EC2KeyName:
+        default: Existing Key Pair
+      NumberOfSubnets:
+        default: Number of subnets
+      PerformanceMode:
+        default: Performance Mode
+      SecurityGroup:
+        default: EFS Security Group
+      Subnet:
+        default: Subnets
+
+Parameters:
+
+  EncrpytedBoolean:
+    AllowedValues:
+      - True
+      - False
+    Default: True
+    Description: Create an encrypted Amazon EFS file system.
+    Type: String
+  Cmk:
+    Description: An existing AWS KMS Customer Master Key (CMK) to encrypt file system
+    Type: String
+  
+  EC2KeyName:
+    Description: Name of an existing EC2 key pair
+    Type: AWS::EC2::KeyPair::KeyName
+  NumberOfSubnets:
+    AllowedValues:
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    Default: 3
+    Description: Number of subnets. This must match your selections in the list of Subnets below.
+    Type: String 
+  PerformanceMode:
+    AllowedValues:
+      - generalPurpose
+      - maxIO
+    Default: generalPurpose
+    Description: Select the performance mode of the file system.
+    Type: String
+  WPDirectory:
+    Description: Wordpress directory
+    Type: String
+  SecurityGroup:
+    Description: Select the Amazon EFS security group.
+    Type: AWS::EC2::SecurityGroup::Id   
+  Subnet:
+    Description: Select existing subnets.
+    Type: List<AWS::EC2::Subnet::Id>
+
+Conditions:
+  
+  NumberOfSubnets1:
+      !Equals [ 1, !Ref NumberOfSubnets ]
+  NumberOfSubnets2:
+      !Equals [ 2, !Ref NumberOfSubnets ]
+  NumberOfSubnets3:
+      !Equals [ 3, !Ref NumberOfSubnets ]
+  NumberOfSubnets4:
+      !Equals [ 4, !Ref NumberOfSubnets ]
+  NumberOfSubnets5:
+      !Equals [ 5, !Ref NumberOfSubnets ]
+  NumberOfSubnets6:
+      !Equals [ 6, !Ref NumberOfSubnets ]
+  Subnet0: !Or
+    - !Condition NumberOfSubnets1
+    - !Condition NumberOfSubnets2
+    - !Condition NumberOfSubnets3
+    - !Condition NumberOfSubnets4
+    - !Condition NumberOfSubnets5
+    - !Condition NumberOfSubnets6
+  Subnet1: !Or
+    - !Condition NumberOfSubnets2
+    - !Condition NumberOfSubnets3
+    - !Condition NumberOfSubnets4
+    - !Condition NumberOfSubnets5
+    - !Condition NumberOfSubnets6
+  Subnet2: !Or
+    - !Condition NumberOfSubnets3
+    - !Condition NumberOfSubnets4
+    - !Condition NumberOfSubnets5
+    - !Condition NumberOfSubnets6
+  Subnet3: !Or
+    - !Condition NumberOfSubnets4
+    - !Condition NumberOfSubnets5
+    - !Condition NumberOfSubnets6
+  Subnet4: !Or
+    - !Condition NumberOfSubnets5
+    - !Condition NumberOfSubnets6
+  Subnet5: !Condition NumberOfSubnets6  
+  UseAWS-ManagedCMK:
+    !Equals ['', !Ref Cmk]
+
+Mappings:
+
+  RegionMap:
+    ap-northeast-1:
+      AMI: ami-0de5311b2a443fb89
+    ap-northeast-2:
+      AMI: ami-09cf633fe86e51bf0
+    ap-south-1:
+      AMI: ami-0e6329e222e662a52
+    ap-southeast-1:
+      AMI: ami-094bbd9e922dc515d
+    ap-southeast-2:
+      AMI: ami-02a66f06b3557a897
+    ca-central-1:
+      AMI: ami-088d4832275406edf
+    eu-central-1:
+      AMI: ami-070b208e993b59cea
+    eu-west-1:
+      AMI: ami-0ee415e1b8b71305f
+    eu-west-2:
+      AMI: ami-0648ea225c13e0729
+    sa-east-1:
+      AMI: ami-0122c4b16734197ac
+    us-east-1:
+      AMI: ami-09d3b3274b6c5d4aa
+    us-east-2:
+      AMI: ami-089a545a9ed9893b6
+    us-west-1:
+      AMI: ami-017c001a88dd93847
+    us-west-2:
+      AMI: ami-0d593311db5abb72b
+
+Resources:
+
+  ElasticFileSystem:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      Encrypted: !Ref EncrpytedBoolean
+      KmsKeyId:
+        !If [ UseAWS-ManagedCMK, !Ref 'AWS::NoValue', !Ref Cmk ]
+      FileSystemTags:
+        - Key: Name
+          Value: !Join [ '', [ 'WordPress / ', !Ref 'AWS::StackName' ] ]
+      PerformanceMode: !Ref PerformanceMode
+  ElasticFileSystemMountTarget0:
+    Condition: Subnet0
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref ElasticFileSystem
+      SecurityGroups:
+      - !Ref SecurityGroup
+      SubnetId: !Select [ 0, !Ref Subnet ]
+  ElasticFileSystemMountTarget1:
+    Condition: Subnet1
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref ElasticFileSystem
+      SecurityGroups:
+      - !Ref SecurityGroup
+      SubnetId: !Select [ 1, !Ref Subnet ]
+  ElasticFileSystemMountTarget2:
+    Condition: Subnet2
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref ElasticFileSystem
+      SecurityGroups:
+      - !Ref SecurityGroup
+      SubnetId: !Select [ 2, !Ref Subnet ]
+  ElasticFileSystemMountTarget3:
+    Condition: Subnet3
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref ElasticFileSystem
+      SecurityGroups:
+      - !Ref SecurityGroup
+      SubnetId: !Select [ 3, !Ref Subnet ]
+  ElasticFileSystemMountTarget4:
+    Condition: Subnet4
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref ElasticFileSystem
+      SecurityGroups:
+      - !Ref SecurityGroup
+      SubnetId: !Select [ 4, !Ref Subnet ]
+  ElasticFileSystemMountTarget5:
+    Condition: Subnet5
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref ElasticFileSystem
+      SecurityGroups:
+      - !Ref SecurityGroup
+      SubnetId: !Select [ 5, !Ref Subnet ]
+
+Outputs:
+  ElasticFileSystem:
+    Value: !Ref ElasticFileSystem
+  ElasticFileSystemDnsName:
+    Description: DNS name for the Amazon EFS file system.
+    Value: !Join [ '.', [ !Ref ElasticFileSystem, 'efs', !Ref 'AWS::Region', 'amazonaws', 'com' ] ]
+  ElasticFileSystemMountCommand:
+    Description: Mount command for mounting the Amazon EFS file system.
+    Value: !Join [ '', [ 'sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ', !Join [ '.', [ !Ref ElasticFileSystem, 'efs', !Ref 'AWS::Region', 'amazonaws', 'com:/', '/', !Ref ElasticFileSystem ] ] ] ]

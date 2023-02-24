@@ -51,11 +51,6 @@ Metadata:
     - Label:
         default: Database Tier
       Parameters:
-        - DatabaseInstanceType
-        - DatabaseEncrpytedBoolean
-        - DatabaseCmk
-        - DatabaseMasterUsername
-        - DatabaseMasterPassword
         - DatabaseName
         - UseElastiCacheBoolean
         - ElastiCacheNodeType
@@ -69,18 +64,6 @@ Metadata:
         default: Bastion Instance Type
       EC2KeyName:
         default: EC2 Key Pair
-      DatabaseCmk:
-        default: AWS KMS CMK for RDS 
-      DatabaseEncrpytedBoolean:
-        default: Encrypted DB Cluster
-      DatabaseInstanceType:
-        default: DB Instance Class
-      DatabaseMasterUsername:
-        default: DB Master Username
-      DatabaseMasterPassword:
-        default: DB Master Password
-      DatabaseName:
-        default: DB Name
       PublicAlbAcmCertificate:
         default: ALB Certificate ARN
       SshAccessCidr:
@@ -234,51 +217,6 @@ Parameters:
     Description: Bastion EC2 instance type.
     Type: String
   
-  DatabaseCmk:
-    Description: AWS KMS Customer Master Key (CMK) to encrypt database cluster
-    Type: String
-  DatabaseEncrpytedBoolean:
-    AllowedValues:
-      - true
-      - false
-    Default: true
-    Description: Indicates whether the DB instances in the cluster are encrypted.
-    Type: String
-  DatabaseInstanceType:
-    AllowedValues:
-      - db.t3.small
-      - db.t3.medium
-      - db.r5.large
-      - db.r5.xlarge
-      - db.r5.2xlarge
-      - db.r5.4xlarge
-      - db.r5.8xlarge
-      - db.r5.12large
-      - db.r5.16xlarge
-      - db.r5.24xlarge
-    ConstraintDescription: Must be a valid RDS instance class.
-    Default: db.t3.medium
-    Description: The Amazon RDS database instance class.
-    Type: String
-  DatabaseMasterUsername:
-    AllowedPattern: ^([a-zA-Z0-9]*)$
-    Description: The Amazon RDS master username.
-    ConstraintDescription: Must contain only alphanumeric characters (minimum 8; maximum 16).
-    MaxLength: 16
-    MinLength: 8
-    Type: String
-  DatabaseMasterPassword:
-    AllowedPattern: ^([a-zA-Z0-9`~!#$%^&*()_+,\\-])*$
-    ConstraintDescription: Must be letters (upper or lower), numbers, spaces, and these special characters `~!#$%^&*()_+,-
-    Description: The Amazon RDS master password. Letters, numbers, spaces, and these special characters `~!#$%^&*()_+,-
-    MaxLength: 41
-    MinLength: 8
-    NoEcho: true
-    Type: String
-  DatabaseName:
-    AllowedPattern: ^([a-zA-Z0-9]*)$
-    Description: The Amazon RDS master database name.
-    Type: String
   SshAccessCidr:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
     Description: The CIDR IP range that is permitted to SSH to bastion instance. Note - a value of 0.0.0.0/0 will allow access from ANY IP address.
@@ -456,6 +394,7 @@ Resources:
         Subnet:
           !GetAtt [ newvpc, Outputs.PublicSubnet ]
       TemplateURL: https://s3.amazonaws.com/aws-refarch/wordpress/latest/templates/aws-refarch-wordpress-03-bastion.yaml
+
   newvpc:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -524,32 +463,8 @@ Resources:
           !GetAtt [ securitygroups, Outputs.PublicAlbSecurityGroup ]
         Vpc:
           !GetAtt [ newvpc, Outputs.Vpc ]
-      TemplateURL: https://s3.amazonaws.com/aws-refarch/wordpress/latest/templates/aws-refarch-wordpress-03-publicalb.yaml    
-  rds:
-    Condition: AvailableAWSRegion
-    DependsOn: [ newvpc, securitygroups ]
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        DatabaseInstanceType:
-          !Ref DatabaseInstanceType
-        DatabaseMasterUsername:
-          !Ref DatabaseMasterUsername
-        DatabaseMasterPassword:
-          !Ref DatabaseMasterPassword
-        DatabaseName:
-          !Ref DatabaseName
-        DatabaseEncrpytedBoolean:
-          !Ref DatabaseEncrpytedBoolean
-        DatabaseCmk:
-          !Ref DatabaseCmk
-        DatabaseSecurityGroup:
-          !GetAtt [ securitygroups, Outputs.DatabaseSecurityGroup ]
-        Subnet:
-          !GetAtt [ newvpc, Outputs.DataSubnet ]
-        NumberOfSubnets:
-          !Ref NumberOfAZs
-      TemplateURL: https://s3.amazonaws.com/aws-refarch/wordpress/latest/templates/wordpress-01-infrastructure-global-rds.yaml
+      TemplateURL: https://s3.amazonaws.com/aws-refarch/wordpress/latest/templates/aws-refarch-wordpress-03-publicalb.yaml   
+ 
   securitygroups:
     Condition: AvailableAWSRegion
     DependsOn: newvpc
@@ -567,4 +482,11 @@ Outputs:
   StackStatus:
     Description: Master Stack Status
     Value: !If [ AvailableAWSRegion, !Join [ '', [ 'Stack created in an available region: ', !Ref 'AWS::Region' ] ], "!!ERROR!!! - Nothing to do! - unavailable AWS Region. You must create this stack in an available AWS Region: 'us-east-1', 'us-east-2', 'us-west-2', 'eu-west-1', 'ap-southeast-2'." ]
-    
+
+  DatabaseSecurityGroup:
+    Description: the security group of aurora db 
+    Value:  !GetAtt [ securitygroups, Outputs.DatabaseSecurityGroup ]
+  
+  DataSubnet:
+    Description: the list of the subnets avalaivable
+    Value: !GetAtt [ newvpc, Outputs.DataSubnet ]

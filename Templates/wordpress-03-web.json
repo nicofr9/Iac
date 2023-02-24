@@ -1,0 +1,28 @@
+[
+  { "ParameterKey": "EC2KeyName",               "ParameterValue": "bernardo" },
+  { "ParameterKey": "PHPVersion",               "ParameterValue": "8.0" },
+  { "ParameterKey": "PHPIniOverride",           "ParameterValue": "https://s3.amazonaws.com/aws-refarch/wordpress/latest/bits/20-aws.ini"},
+  { "ParameterKey": "WebAsgMax",                "ParameterValue": "2" },
+  { "ParameterKey": "WebAsgMin",                "ParameterValue": "1" },
+  { "ParameterKey": "WebInstanceType",          "ParameterValue": "t3.small" },
+  { "ParameterKey": "WPAdminPassword",          "ParameterValue": "ChangeThisPassword5678" },
+  { "ParameterKey": "WPAdminUsername",          "ParameterValue": "WPAdmin" },
+  { "ParameterKey": "WPDirectory",              "ParameterValue": "site" },
+  { "ParameterKey": "WPDomainName",             "ParameterValue": "" },
+  { "ParameterKey": "WPLocale",                 "ParameterValue": "en_GB" },
+  { "ParameterKey": "WPTitle",                  "ParameterValue": "This is a new WordPress site on Amazon Web Services" },
+  { "ParameterKey": "WPVersion",                "ParameterValue": "latest" },
+  { "ParameterKey": "NumberOfSubnets",                "ParameterValue": "2" },
+  { "ParameterKey": "DatabaseClusterEndpointAddress",        "ParameterValue": "rds-databasecluster-633tsodi7enb.cluster-czrmxvjt82xh.eu-west-1.rds.amazonaws.com" },
+  { "ParameterKey": "DatabaseMasterPassword",                "ParameterValue": "DBMasterPassword" },
+  { "ParameterKey": "WebSecurityGroup",                		 "ParameterValue": "sg-0ef2c72e0cbae9951" },
+  { "ParameterKey": "PublicAlbTargetGroupArn",               "ParameterValue": "arn:aws:elasticloadbalancing:eu-west-1:375122932485:targetgroup/infras-Publi-QAAU3EVX4UCS/a7f36eb938a01442" },
+  { "ParameterKey": "PublicAlbHostname",                     "ParameterValue": "infra-Publi-375FO4D7UDRZ-655675706.eu-west-1.elb.amazonaws.com" },
+  { "ParameterKey": "SslCertificate",                        "ParameterValue": "false" },
+  { "ParameterKey": "ElasticFileSystem",                     "ParameterValue": "fs-09d9dc088cd27a0ab" },
+  { "ParameterKey": "DatabaseName",                          "ParameterValue": "wordpressdb" },
+  { "ParameterKey": "Subnet",                                "ParameterValue": "subnet-097c5dd6f35c54a10,subnet-080de8e41d7a67a6b" },
+  { "ParameterKey": "WPAdminEmail",                          "ParameterValue": "admin@test.com" },
+  { "ParameterKey": "DatabaseMasterUsername",                "ParameterValue": "wordpress" }
+]
+
