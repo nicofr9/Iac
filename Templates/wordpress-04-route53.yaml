@@ -34,7 +34,7 @@ Parameters:
     Description: The DNS endpoint - CloudFront DNS if using CloudFront else Public ELB DNS name.
     Type: String
   DnsHostId:
-#    AllowedPattern: ^[A-Z0-9]{14}$
+    AllowedPattern: ^[A-Z0-9]{14}$
     Description: The DNS host zone id - 'Z2FDTNDATAQYW2' if using CloudFront else Public ELB host zone id.
     Type: String
   WPDomainName:
@@ -42,16 +42,20 @@ Parameters:
     Description: The main domain name of the WordPress site (e.g. example.com).
     Type: String
   Hostname:
-    AllowedPattern: ^(?!http)(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$
-    Description: The Host name of the WordPress site (e.g. www).
     Type: String
+    Description: Identifier used for global database cluster
+    AllowedPattern: '^[a-zA-Z]{1}(?:-?[a-zA-Z0-9]){0,62}$'
+
 Resources:
+
   RecordSet:
-    Type: AWS::Route53::RecordSet
+    Type: AWS::Route53::RecordSetGroup
     Properties:
-      HostedZoneName: !Ref WPDomainName
-      Name: !Join ['', [!Ref Hostname, !Ref WPDomainName, '.']]
-      ResourceRecords:
-      - !Ref DnsEndpoint
-      TTL: 3600
-      Type: A
+      HostedZoneName: !Join ['', [!Ref WPDomainName, '.']]
+      RecordSets:
+      - Name: !Join ['', ['www.', !Ref Hostname, '.', !Ref WPDomainName, '.']]
+        Type: A
+        AliasTarget:
+          DNSName: !Ref DnsEndpoint
+          EvaluateTargetHealth: True
+          HostedZoneId: !Ref DnsHostId

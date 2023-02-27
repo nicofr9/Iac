@@ -132,6 +132,11 @@ Metadata:
 
 Parameters:
 
+  GlobalClusterIdentifier:
+    Type: String
+    Description: Identifier used for global database cluster
+    AllowedPattern: '^[a-zA-Z]{1}(?:-?[a-zA-Z0-9]){0,62}$'
+
   EC2KeyName:
     ConstraintDescription: Must be letters (upper or lower), numbers, and special characters.
     Description: Name of an EC2 KeyPair. Your bastion & Web instances will launch with this KeyPair.
@@ -531,6 +536,8 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
+        GlobalClusterIdentifier:
+          !Ref GlobalClusterIdentifier
         DatabaseInstanceType:
           !Ref DatabaseInstanceType
         DatabaseMasterUsername:
@@ -549,7 +556,8 @@ Resources:
           !GetAtt [ newvpc, Outputs.DataSubnet ]
         NumberOfSubnets:
           !Ref NumberOfAZs
-      TemplateURL: https://s3.amazonaws.com/aws-refarch/wordpress/latest/templates/wordpress-01-infrastructure-global-rds.yaml
+      TemplateURL: https://webinar2-iac-demo.s3.eu-west-2.amazonaws.com/rds/wordpress-01-infrastructure-global-rds.yaml
+
   securitygroups:
     Condition: AvailableAWSRegion
     DependsOn: newvpc
