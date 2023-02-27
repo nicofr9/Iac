@@ -262,7 +262,7 @@ Parameters:
       - db.r5.16xlarge
       - db.r5.24xlarge
     ConstraintDescription: Must be a valid RDS instance class.
-    Default: db.t3.medium
+    Default: db.r5.large
     Description: The Amazon RDS database instance class.
     Type: String
   DatabaseMasterUsername:
