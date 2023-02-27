@@ -1,8 +1,8 @@
 ![](images/AWS_logo_PMS_300x180.png)![](images/beta80logo.jpeg)
 # **WEBINAR 2: ROAD TO CLOUD**
-To launch the entire stack and deploy a WordPress site on AWS, click on one of the ***Launch Stack*** links below or download the Master template and launch it locally.
+Per lanciare l'intero stack e distribuire un sito WordPress su AWS, fate clic su uno dei link di lancio dello stack qui sotto o scaricate il modello Master e lanciatelo localmente.
 
-You can launch this CloudFormation stack, using your account
+È possibile avviare questo stack CloudFormation, utilizzando il proprio account
 
 ## Overview
 
@@ -24,54 +24,56 @@ You can launch this CloudFormation stack, using your account
 ### Input Parameters
 
 #### General AWS
-- EC2 Key Name Pair
-- SSH Access CIDR block (to access bastion host)
-- Email address for WordPress administration and SNS notifications
-- Site Domain Name (e.g. 'example.com') - use this only if you will use your own custom domain name
-- Select if you want to create a DNS record set for your custom dist domain name
-- Select if you want to use a AWS CloudFront to cache images at AWS edge locations (3rd party plugins are required to leverage a CDN)
-- Enter the ARN of the AWS Certificate Manager certificate you created in us-east-1 for your custom site domain name
+- Coppia di nomi di chiavi EC2
+- Blocco CIDR di accesso SSH (per accedere all'host bastione)
+- Indirizzo e-mail per l'amministrazione di WordPress e per le notifiche SNS
+- Nome di dominio del sito (ad es. 'example.com') - utilizzare solo se si utilizza un nome di dominio personalizzato.
+- Selezionare se si desidera creare un record DNS per il nome di dominio personalizzato.
+- Selezionare se si desidera utilizzare AWS CloudFront per memorizzare le immagini nella cache presso le postazioni edge di AWS (per utilizzare un CDN sono necessari plugin di terze parti).
+- Inserire l'ARN del certificato AWS Certificate Manager creato in us-east-1 per il nome di dominio del sito personalizzato
 
-#### Network
-- Number of Avilability Zones (AZs) - from 2 to 6
-- Select the individual Availability Zones where resources will be launched (the number of selected AZs must match the number of AZs selected above)
-- VPC CIDR block
-- VPC tenancy
-- CIDR block for public subnets 1 to 6
-- CIDR block for web subnets 1 to 6
-- CIDR block for data subnets 1 to 6
+#### Rete
+- Numero di zone di disponibilità (AZ) - da 2 a 6
+- Selezionare le singole Availability Zone in cui verranno lanciate le risorse (il numero di AZ selezionate deve corrispondere al numero di AZ selezionato in precedenza).
+- Blocco CIDR della VPC
+- Tenancy VPC
+- Blocco CIDR per le sottoreti pubbliche da 1 a 6
+- Blocco CIDR per le sottoreti web da 1 a 6
+- Blocco CIDR per sottoreti dati da 1 a 6
 
 #### File System
-- Amazon EFS performance mode
-- Encrypted file system (boolean)
-- AWS KMS Customer Master Key ARN (if enabling encryption and using customer-managed CMK)
-- Clone EFS, use the System ID of an existing EFS Filesystem. The data is copied to the Site Directory. If the Site Directory exists on the source filesystem, only the contents of the site directory are copied. So make sure if you are copying from an existing Wordpress Cloudformation template, that the site directory is the same.
-- Add dummy data to the file system to achieve higher throughput & IOPS beyond the amount of data your WordPress environment will use. This value is in GiB.
-- The instance type that will be used to dd dummy data into the file system
-- Select if you want to create alarms that send SNS notifications when the file system's burst credit balance drops below certain thresholds.
-- The instance type that will be used to dynamically adjust alarm thresholds as permitted throughput changes.
-- The 'Warning' threshold has a default value of 180 minutes. This means that a CloudWatch alarm will send an email notification 180 minutes before the credit balance drops to zero, based on the latest permitted throughput rate.
-- The 'Critical' threshold has a default value of 60 minutes. This means that a CloudWatch alarm will send an email notification 60 minutes before the credit balance drops to zero, based on the latest permitted throughput rate.
+- Modalità di prestazione Amazon EFS
+- File system crittografato (booleano)
+- AWS KMS Customer Master Key ARN (se si abilita la crittografia e si usa la CMK gestita dal cliente)
+- Clonare EFS, utilizzare l'ID di sistema di un filesystem EFS esistente. I dati vengono copiati nella Site Directory. Se la directory del sito esiste sul filesystem di origine, viene copiato solo il contenuto della directory del sito. Quindi, se si sta copiando da un modello Wordpress Cloudformation esistente, assicurarsi che la directory del sito sia la stessa.
+- Aggiungete dati fittizi al file system per ottenere un throughput e un IOPS superiori alla quantità di dati che l'ambiente WordPress utilizzerà. Questo valore è espresso in GiB.
+- Il tipo di istanza che verrà utilizzata per aggiungere dati fittizi al file system.
+- Selezionare se si desidera creare allarmi che inviino notifiche SNS quando il saldo del credito burst del file system scende al di sotto di determinate soglie.
+- Il tipo di istanza che verrà utilizzata per regolare dinamicamente le soglie di allarme al variare del throughput consentito.
+- La soglia 'Warning' ha un valore predefinito di 180 minuti. Ciò significa che un allarme CloudWatch invierà una notifica via e-mail 180 minuti prima che il saldo del credito scenda a zero, in base all'ultimo tasso di throughput consentito.
+- La soglia 'Critico' ha un valore predefinito di 60 minuti. Ciò significa che un allarme di CloudWatch invierà una notifica via e-mail 60 minuti prima che il saldo del credito scenda a zero, in base all'ultimo tasso di throughput consentito.
 
-#### Database
-- Database Name
-- Database Master Username
-- Database Master Password
-- DB Restore from Snapshot, enter the cluster Snapshot name from the RDS console. (formatted rds:wordpress-stack-name-rds-xxxxxxxx-databasecluster-apzdbrozmzcn-snapshot-date)
-- Database Size
-- Database Instance Class Type
-- Encrypted database storage (boolean)
-- AWS KMS Customer Master Key ARN (if enabling encryption and using customer-managed CMK)
-- Create ElastiCache cluster (boolean)
-- ElastiCache Node Type
+#### Database 
+- Nome del database
+- Nome utente master del database
+- Password master del database
+- DB Restore from Snapshot, inserire il nome dell'istantanea del cluster dalla console RDS. (formattato rds:wordpress-stack-name-rds-xxxxxxxx-databasecluster-apzdbrozmzcn-snapshot-date)
+- Dimensione del database
+- Istanza di database Tipo di classe
+- Archiviazione crittografata del database (booleano)
+- AWS KMS Customer Master Key ARN (se si abilita la crittografia e si usa la CMK gestita dal cliente)
+- Crea cluster ElastiCache (booleano)
+- Tipo di nodo ElastiCache
+
+#### Parametri di Bastion
+- Tipo di istanza Bastion
+
 
 #### Bastion Parameters
 - Bastion Instance Type
 
 #### Web Parameters
-- Create CloudFront distribution (boolean)
-- Create Route 53 record set (boolean)
-- PHP Version (5.5, 5.6, or 7.0 - recomended)
+- PHP Version (5.6, 7.0, or 8.0 - recomended)
 - Web Instance Type
 - The maximum number of instances in the web tier auto scaling group
 - The minimum (and desired) number of instances in the web tier auto scaling group
