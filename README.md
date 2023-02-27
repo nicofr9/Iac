@@ -1,8 +1,13 @@
-![](images/AWS_logo_PMS_300x180.png)![](images/beta80logo.jpeg)
+[](images/AWS_logo_PMS_300x180.png)![](images/beta80logo.jpeg)
 # **WEBINAR 2: ROAD TO CLOUD**
 To launch the entire stack and deploy a WordPress site on AWS, click on one of the ***Launch Stack*** links below or download the Master template and launch it locally.
 
 You can launch this CloudFormation stack, using your account
+
+## Overview
+
+![architecture-overview](images/aws-refarch-wordpress-v20171026.jpeg)
+
 | Component | step | Launch |
 | --- | --- | ---
 |crea l'infrastruttura nella region us-east-1 | step 1 | [![cloudformation-launch-stack](images/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=WordPressCore&templateURL=https://webinar2-iac-demo.s3.eu-west-2.amazonaws.com/core/wordpress-01-infrastructure.yaml) |
