@@ -1,4 +1,4 @@
-[](images/AWS_logo_PMS_300x180.png)![](images/beta80logo.jpeg)
+![](images/AWS_logo_PMS_300x180.png)![](images/beta80logo.jpeg)
 # **WEBINAR 2: ROAD TO CLOUD**
 To launch the entire stack and deploy a WordPress site on AWS, click on one of the ***Launch Stack*** links below or download the Master template and launch it locally.
 
